@@ -122,3 +122,5 @@ if cap1.isOpened() and cap2.isOpened():
 else:  # 비디오를 못찾으면 강제종료
     print("Error : video not found")
     sys.exit()
+
+#git add . 용 변경사항
