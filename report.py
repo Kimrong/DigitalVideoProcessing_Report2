@@ -43,7 +43,6 @@ font_thickness = 2  # 폰트 두께
 # 밝기 관련 변수
 brightness = 10.0
 
-
 def callback_brightness(x):  # 밝기 관련 변수 조절
     global brightness
     if x >= 10:
@@ -51,11 +50,9 @@ def callback_brightness(x):  # 밝기 관련 변수 조절
     elif x < 10:
         brightness = x / 10.0
 
-
 def callback_playbar(x):
     global frame_pos
     frame_pos = x
-
 
 if cap1.isOpened() and cap2.isOpened():
     s_time = time.time()  # 시작시간 기록
