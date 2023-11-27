@@ -45,13 +45,23 @@ onx=0
 ony=0
 offx=488
 offy=208
+heflag=0
 def callback_brightness(x):
     global brightness
     if x >= 10 :
         brightness=4**(x/10.0)-3
     elif x < 10 :
         brightness=x/10.0
-        
+
+def HE(x):
+    global heflag
+    if x==1:
+        # subframe=cv.equalizeHist(frame2[ony:offy, onx:offx])
+        # frame2[ony:offy, onx:offx]=subframe
+        heflag=1
+    else:
+        heflag=0
+
 def callback_playbar(x):
     global frame_pos
     frame_pos=x
@@ -78,6 +88,7 @@ if cap1.isOpened() and cap2.isOpened():
     win=cv.namedWindow(winname)
     cv.createTrackbar("brightness", winname, 10, 20, callback_brightness)
     cv.createTrackbar("playbar", winname, 0, tot_frame, callback_playbar)
+    cv.createTrackbar("HE", winname, 0, 1, HE)
     print(onx, ony, offx, offy)
     while ret1 or ret2:
         # 프레임 위치에 따라 재생바의 위치도 변경
@@ -87,6 +98,19 @@ if cap1.isOpened() and cap2.isOpened():
         #scaled_frame=cv.convertScaleAbs(frame2,alpha=brightness,beta=0)
         frame2[ony:offy, onx:offx]=subframe
         scaled_frame=frame2
+        if heflag==1:
+            
+            yuv_image = cv.cvtColor(subframe, cv.COLOR_BGR2YUV)
+
+            # Y 채널에 대해 히스토그램 평활화 수행
+            yuv_image[:,:,0] = cv.equalizeHist(yuv_image[:,:,0])
+
+            # YUV 이미지를 다시 BGR로 변환
+            equalized_image = cv.cvtColor(yuv_image, cv.COLOR_YUV2BGR)
+            frame2[ony:offy, onx:offx]=equalized_image
+            # gray_frame2 = cv.cvtColor(subframe, cv.COLOR_BGR2GRAY)
+            # subframe = cv.equalizeHist(gray_frame2)
+            # frame2[ony:offy, onx:offx] = cv.cvtColor(subframe, cv.COLOR_GRAY2BGR)
         # 이미지에 텍스트 추가
         
         text_frame1 = cv.putText(frame1, "org_index="+str(int(cap1.get(cv.CAP_PROP_POS_FRAMES))), text_pos, font, font_scale, font_color,
