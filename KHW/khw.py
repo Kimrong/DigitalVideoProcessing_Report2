@@ -97,31 +97,29 @@ if cap1.isOpened() and cap2.isOpened():
 
         # 2번 프레임에 밝기 변화 추가
         subframe=cv.convertScaleAbs(frame2[ony:offy, onx:offx],alpha=brightness,beta=0)
+        frame2[ony:offy, onx:offx] = subframe
 
         # 히스토그램 평활화
         if heflag==1:
-            yuv_image = cv.cvtColor(subframe, cv.COLOR_BGR2YUV)
+            yuv_image = cv.cvtColor(frame2[ony:offy, onx:offx], cv.COLOR_BGR2YUV)
 
             # Y 채널에 대해 히스토그램 평활화 수행
             yuv_image[:,:,0] = cv.equalizeHist(yuv_image[:,:,0])
 
             # YUV 이미지를 다시 BGR로 변환
             equalized_image = cv.cvtColor(yuv_image, cv.COLOR_YUV2BGR)
-            subframe = equalized_image
+            frame2[ony:offy, onx:offx] = equalized_image
 
         # 가우시안 블러링
         if sigma!=0:
-            blur_image = cv.GaussianBlur(subframe, (0,0),sigma)
-            subframe = blur_image
+            blur_image = cv.GaussianBlur(frame2[ony:offy, onx:offx], (0,0),sigma)
+            frame2[ony:offy, onx:offx] = blur_image
 
         # 언샤프 마스킹
         if un_sigma!=0:
-            blur = cv.GaussianBlur(subframe, ksize=(21, 21),sigmaX=un_sigma, borderType=cv.BORDER_REPLICATE)
-            UnsharpMaskImg = subframe - blur
-            subframe = subframe + UnsharpMaskImg
-
-        #오른쪽 영상에 적용
-        frame2[ony:offy, onx:offx] = subframe
+            blur = cv.GaussianBlur(frame2[ony:offy, onx:offx], ksize=(21, 21),sigmaX=un_sigma, borderType=cv.BORDER_REPLICATE)
+            UnsharpMaskImg = frame2[ony:offy, onx:offx] - blur
+            frame2[ony:offy, onx:offx] += UnsharpMaskImg
 
         # 이미지에 텍스트 추가
         text_frame1 = cv.putText(frame1, "org_index="+str(int(cap1.get(cv.CAP_PROP_POS_FRAMES))), text_pos, font, font_scale, font_color,font_thickness)
