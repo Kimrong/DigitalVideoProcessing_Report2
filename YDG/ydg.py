@@ -89,16 +89,16 @@ def callback_mouse(event, x, y, flags, param):
     if event == cv.EVENT_LBUTTONDOWN:
         print(x-488, y)
         mousesq.setminx(x - 488) # 오른쪽 영상의 x좌표이므로 왼쪽 영상의 넓이 488을 빼준다.
-        mousesq.setminy=(y)
+        mousesq.setminy(y)
         print(mousesq.getminx(), mousesq.getminy(), mousesq.getmaxx(), mousesq.getmaxy())
     elif event == cv.EVENT_MOUSEMOVE:
         if flags & cv.EVENT_FLAG_LBUTTON:
             if x==mousesq.getminx():
-                mousesq.setmaxx(mousesq.getminx()+3)
+                mousesq.setmaxx(mousesq.getminx())
             else:
                 mousesq.setmaxx(x - 488)
             if y==mousesq.getminy():
-                mousesq.setmaxy(mousesq.getminy()+3)
+                mousesq.setmaxy(mousesq.getminy())
             else:
                 mousesq.setmaxy(y)
     elif event == cv.EVENT_LBUTTONUP:
@@ -122,8 +122,6 @@ if cap1.isOpened() and cap2.isOpened():
         if mousesq.getminy()-mousesq.getmaxy()!=0 and mousesq.getminx()-mousesq.getmaxx()!=0:
             subframe=cv.convertScaleAbs(frame2[mousesq.getminy():mousesq.getmaxy(), mousesq.getminx():mousesq.getmaxx()],alpha=brightness,beta=0)
             frame2[mousesq.getminy():mousesq.getmaxy(), mousesq.getminx():mousesq.getmaxx()] = subframe
-            # 2번 프레임에 밝기 변화 추가
-            
 
             # 히스토그램 평활화
             if heflag==1:
